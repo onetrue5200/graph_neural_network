@@ -74,13 +74,117 @@ UU^T=I, L=U\Lambda U^{-1}=U\Lambda U^T
 $$
 拉普拉斯矩阵是图上的一种拉普拉斯算子
 
+拉普拉斯算子$\bigtriangleup$定义为梯度gradient的散度divergence
+$$
+\bigtriangleup f = div(grad(f)) = \bigtriangledown \cdot (\bigtriangledown f)
+$$
+对于n维欧几里得空间，我们可以人为拉普拉斯算子是一个二阶微分算子。即在各个维度求二阶导数后求和。
+$$
+\bigtriangleup f = \sum_i \frac{\partial^2 f}{\partial x_i^2}
+$$
+在图上的拉普拉斯算子定义如下：
+$$
+\bigtriangleup f_i=\sum_{(i,j)\in\varepsilon}(f_i-f_j)
+$$
+其中$f=(f_1,f_2,\cdots,f_n)$，代表n个节点上每个节点的信号。
 
+当边有权重时：
+$$
+\bigtriangleup f_i=\sum_{(i,j)\in\varepsilon}W_{ij}(f_i-f_j)=\sum_{j=1}^{n}W_{ij}(f_i-f_j)=D_{ii}f_i-\sum_{j=1}^nW_{ij}f_j
+$$
+对于n个节点有：
+$$
+\bigtriangleup f=g_\theta
+=\begin{pmatrix} \bigtriangleup f_1\\ \vdots\\ \bigtriangleup f_n\\ \end{pmatrix}
+=\begin{pmatrix}D_{11}f_1-\sum_{j=1}^nW_{1j}f_j\\\vdots\\D_{nn}f_n-\sum_{j=1}^nW_{nj}f_j\\ \end{pmatrix}
+=\begin{pmatrix} D_{11}&&\\&\ddots&\\&&D_{nn} \end{pmatrix}f-Wf
+=Df-Wf=Lf
+$$
+所以，拉普拉斯矩阵是图上的一种拉普拉斯算子
 
+图傅里叶变换
 
+傅里叶反变换的本质是把任意一个函数表示成若干正交基函数的线性组合
 
-background
+对于图上的节点信号 $x\in\mathbb R^n$，我们希望找到一组正交基，将其表达为这组正交基的线性组合
+
+因此使用拉普拉斯矩阵的特征向量作为图傅里叶变换的基函数
+
+使用拉普拉斯的特征向量作为基函数，则节点信号可以表示为：
+$$
+x=\hat{x}(\lambda_1)\vec{u_1}+\cdots+\hat{x}(\lambda_n)\vec{u_n}=U\hat x
+$$
+傅里叶变换与图傅里叶变换对比
+
+|      |                     经典傅里叶变换                     |                 图傅里叶变换                  |
+| :--: | :----------------------------------------------------: | :-------------------------------------------: |
+| 公式 | $\hat x(w)=\sum_{k=1}^{n} x(k)e^{-\frac{2\pi}{n} iwk}$ | $\hat x(\lambda_l)=\sum_{k=1}^n x(k){u_l}(k)$ |
+|  基  |               $e^{-\frac{2\pi}{n} iwk}$                |                  ${u_l}(k)$                   |
+| 频率 |                          $w$                           |                  $\lambda_l$                  |
+| 振幅 |                      $\hat x(w)$                       |              $\hat x(\lambda_l)$              |
+
+经典傅里叶变换的基函数是拉普拉斯算子的本征函数(eigenfunction)，而拉普拉斯矩阵就是图上的拉普拉斯算子，所以图傅里叶变换的基函数即为图拉普拉斯矩阵的特征向量(eigenvector)。
+
+特征基向量的性质
+
+- 拉普拉斯矩阵的特征值担任了和频率类似的位置
+- 拉普拉斯矩阵的特征向量担任了基函数的位置，特征值小的特征向量比较平滑，特征值大的特征向量变化比较剧烈，对应于低频基函数和高频基函数。
+
+总结
+
+依靠图傅里叶变换，可以将图上的节点信号$x$，从空间域转换到频域。
+
+图卷积定义：
+$$
+x*_Gg=U(U^Tx\odot U^Tg)
+$$
+作为卷积核的$g$，我们不关心其在空间域上的表示，只关心其频率域上的表示，令$g_\theta=diag(U^Tg)$，
+$$
+x*_Gg_\theta=U(U^Tx\odot U^Tg)=Ug_\theta U^Tx
+$$
+
 
 
 
 model
+
+
+
+SCNN
+$$
+x_{k+1,j}=h(U\sum_{i=1}^{C}F_{j,i}U^Tx_{k,i})
+$$
+其中，j表示卷积核，i表示输入channel，k表示层，h为激活函数。
+
+
+
+ChebNet
+
+解决计算复杂度大的问题，采用Chebyshev多项式代替谱域的卷积核
+
+
+
+GCN
+
+仅考虑一阶chebyshev多项式，每个卷积核只有一个参数
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
